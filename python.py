@@ -1,3 +1,5 @@
+# Have the function FirstReverse(str) take the str parameter being passed and return the string in reversed order.
+# Use the Parameter Testing feature in the box below to test your code with different arguments.
 def FirstReverse(strParam):
     strParam=strParam[::-1]
     return strParam
@@ -6,6 +8,11 @@ def FirstReverse(strParam):
 print(FirstReverse(input()))
 sas
 sas
+# Have the function FirstFactorial(num) take the num parameter being passed and return the factorial of it
+#(ie. if num = 4, return (4 * 3 * 2 * 1)). For the test cases, the range will be between 1 and 18.
+# Use the Parameter Testing feature in the box below to test your code with different arguments.
+
+
 def FirstFactorial(num):
     k=1
     for i in range(num,0,-1):
@@ -35,25 +42,7 @@ def LongestWord(sen):
 
     return longest_word
 
-# Example usage:
-print(LongestWord("fundjd))(&!! time"))  # This will print "time"
-fundjd
-import re
-def remove(s):
-    s= re.sub(r'[^\w\s]','',s)
-    word=s.split()
-    long=max(word,key=len)
-    return long
-print(remove("fundjd))(&!! time"))  # This will print "time
-fundjd
-import re
-def remove(s):
-    s = re.sub(r'[^\w\s]', '', s)  # Remove non-alphanumeric characters
-    words = s.split()  # Split the string into words
-    longest_word = max(words, key=len)  # Find the longest word
-    return longest_word
-print(remove("fundjd))(&!! time"))  # This will print "time"
-fundjd
+#letter channge
 def LetterChanges(a_string):
     result = ''
     for char in a_string:
@@ -83,25 +72,7 @@ def LetterChanges(a_string):
 print(LetterChanges(input()))
 dddd
 EEEE
-def letterchange(stringg):
-    result=''
-    for ch in stringg:
-        if ch.isalpha():
-            if ch.lower() in 'aeiou':
-                result += ch.upper()
-            elif ch.lower() == 'z':
-                result += ch.upper()
-            else:
-                result += chr(ord(ch)+1)
-            
-    else:
-        result += ch
-        
-
-    return result
-print(letterchange(input())) 
-lkdoijoidjqpojdpoqwjpd
-mleOIkOIekrqOkeqOrxkqed
+  
 # Have the function SimpleAdding(num) add up all the numbers from 1 to num. For the test cases,
 # the parameter num will be any number from 1 to 1000.
 
@@ -146,36 +117,9 @@ print(SimpleSymbols("+a+b+="))  # This will print "true"
 ++d+===+c++==a
 false
 true
-def checkk(char):
-    let='abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
-    k = list(char)
-    if k[0] != '+' or k[-1] != '+':
-        return "False"
-    for i in range(1,len(k)-1):
-        if k[i] in letters:
-            if k[i-1] !='+' or  k[i + 1] != '+':
-                return "False"
-    return 'true'    
-
-
-print(checkk(input())) 
-+a+b+=
-False
-def checkk(char):
-    k = list(char)
-    if k[0] != '+':
-        return "false"
-    if k[-1] != '+':
-        return "false"
-    for i in range(1, len(k) - 1):
-        if k[i].isalpha():
-            if k[i - 1] != '+' or k[i + 1] != '+':
-                return "false"
-    return 'true'
-
-print(checkk(input()))
-+a+b+=
-false
+# Using the Python language, have the function CheckNums(num1,num2) take both parameters being passed and return the
+# string true if num2 is greater than num1, otherwise return the string false. If the parameter values are equal to
+# each other then return the string -1.
 def CheckNums(num1,num2):
    
     if num1 == num2:
@@ -223,6 +167,9 @@ sorted_string = ''.join(sorted(string))
 print(sorted_string)
 Enter a string: KJDjdakjsljdA
 ADJKaddjjjkls
+
+#check AB COUNT
+
 def ABCheck(s):
     s = s.lower()
     for i in range(len(s)):
@@ -237,6 +184,10 @@ result = ABCheck(string)
 print(result)
 Enter a string: djsj
 false
+
+
+
+#count aeiouuuuuu vovels
 def VowelCount(a_string):
     vowels = 'aeiou'
     vowel_count = 0
@@ -282,6 +233,9 @@ def countch(x):
 print(countch(input()))
 xoxo
 True
+
+#def ArithGeo(arr):
+
 def ArithGeo(arr):
     is_arithmetic = True
     is_geometric = True

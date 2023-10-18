@@ -298,3 +298,19 @@ def SecondGreatLow(arr):
 # Example usage
 test_array = [7, 7, 12, 98, 106]  # Change this array to test with other inputs
 print(SecondGreatLow(test_array))
+
+#sting challangeeeeee
+sent="43hell2o wor6l7d2" 
+nums="0123456789" 
+words=sent.split(' ') 
+flag=True 
+for word in words: 
+     chars=[] 
+     index=[] 
+     for i in range(0,len(word)): 
+         if word[i] in nums: 
+             chars.append(word[i]) 
+             index.append(i) 
+     if len(chars)!=3 or (index[-1]-index[0])==2: 
+         flag = False 
+print(flag) 

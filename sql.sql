@@ -1,10 +1,7 @@
- *       +-------+---------------+--------------+--------------------+---------------+       *
- *       | ID    | Name          | DivisionName |    ManagerName     | Salary        |       *
- *       +-------+---------------+--------------+--------------------+---------------+       *
+ 
  *       | 222	 | Mark Red      | Sales	|    Susan Wall	     | 86000 	     |       *
  *       +-------+---------------+--------------+--------------------+---------------+       *
- *                                                                                           *
- ********************************************************************************************/
+
 
 SELECT  maintable_M3LJZ.ID,  maintable_M3LJZ.Name,  cb_companydivisions.DivisionName AS DivisionName,
         t.Name AS ManagerName,maintable_M3LJZ.Salary FROM maintable_M3LJZ
@@ -14,17 +11,10 @@ JOIN ( SELECT Name,ID FROM maintable_M3LJZ
 WHERE Salary = (SELECT MIN(Salary) FROM (SELECT  
   * FROM maintable_M3LJZ ORDER BY salary DESC 
 LIMIT 3) AS x )
-   
-                        +-----------------+------------+------------+                      *
- *                        | ReportsTo       | Members    | Average Age|                      *
+
  *                        +-----------------+------------+------------+                      *
  *                        | Bob Boss        | 2          | 24         |                      *
- *                        | Daniel Smith    | 1          | 22         |                      *
- *                        | David S         | 1          | 25         |                      *
- *                        | Jenny Richards  | 2          | 31         |                      *
- *                        +-----------------+------------+------------+                      *
- *                                                                                           *
- ********************************************************************************************/
+
 SELECT  ReportsTo,COUNT(ReportsTo) AS Members,
         CEIL(AVG(AGE)) AS `Average Age`
 FROM maintable_L99ON        
@@ -32,19 +22,10 @@ WHERE ReportsTo IS NOT NULL
 GROUP BY ReportsTo
 ORDER BY ReportsTo
 
- *                       +---------+---------------------+-------+                     *
  *                       | GroupID | CompanyName         | Count |                     *
  *                       +---------+---------------------+-------+                     *
  *                       |       27| Machinx             |      1|                     *
- *                       |        5| WaterBus Enterprise |      1|                     *
- *                       |       36| Johnson and Sons    |      2|                     * 
- *                       |       35| Shipping & Co.      |      3|                     *
- *                       |        6| Alloy LLC           |      3|                     *
- *                       |       40| FireConsulting      |      5|                     *
- *                       |       39| News Corp.          |      6|                     *
- *                       +---------+---------------------+-------+                     *
- *                                                                                     *
- **************************************************************************************/
+
 
 SELECT 
     maintable_V47CA.GroupID,
@@ -63,8 +44,7 @@ ORDER BY
 *                     |      35 |    Daniel  | Knolle    | Manager    | 39765        | Shipping & Co.      |     6  |                    *
 *                     +---------+------------+-----------+------------+--------------+---------------------+--------+                    *
 *                     |      35 |    Arnold  | Sully     | Manager    | 48507        | Shipping & Co.      |     6  |                    *
-*                     +---------+------------+-----------+------------+--------------+---------------------+--------+                    *
-*****************************************************************************************************************************************/
+--
 
 SELECT 
         * 
@@ -101,3 +81,4 @@ SELECT  name, age
 FROM  table_name
 ORDER BY age 
 LIMIT 3;
+

@@ -98,3 +98,22 @@ COUNT(*) AS number_of_sessions
 FROM musigma_5qluo_loginfo
 GROUP BY session_duration;
 
+--YYYY-MM_DDD-
+SELECT Month, MonthToMonthChange
+FROM (
+    SELECT yyyymm, Month,
+        IF(@last_entry = 0, 0, y.count - @last_entry) AS MonthToMonthChange,
+        @last_entry := y.count
+    FROM
+        (SELECT @last_entry := 0) x,
+        (SELECT 
+            MONTHNAME(DateJoined) AS Month,
+            EXTRACT(YEAR_MONTH FROM DateJoined) AS yyyymm,  
+            COUNT(*) AS count
+        FROM maintable_D03TI
+        GROUP BY yyyymm
+        ORDER BY yyyymm
+        ) y
+) a
+WHERE MonthToMonthChange != 0
+ORDER BY yyyymm;

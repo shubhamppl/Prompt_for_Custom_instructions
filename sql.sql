@@ -88,4 +88,13 @@ SELECT  name, age
 FROM  table_name
 ORDER BY age 
 LIMIT 3;
+---------
+SELECT    CASE
+WHEN login_time <= 15 THEN '15-30'
+WHEN logout_time <= 30 THEN '38-45'
+ELSE '45+'
+END AS session_duration,
+COUNT(*) AS number_of_sessions
+FROM musigma_5qluo_loginfo
+GROUP BY session_duration;
 

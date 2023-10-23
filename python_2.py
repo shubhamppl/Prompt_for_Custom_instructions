@@ -262,3 +262,38 @@ def NumberEncoding(s):
 # Test the function
 s = "af5c a#!"
 print(NumberEncoding(s))
+
+###array adddition nnn
+def ArrayAddition(arr):
+    max_num = max(arr)
+    arr.remove(max_num)
+    return arr
+
+# Helper function to recursively check for combinations
+def can_sum_to_target(target, numbers):
+    if target == 0:
+        return True
+    if target < 0 or not numbers:
+        return False
+    return can_sum_to_target(target - numbers[0], numbers[1:]) or can_sum_to_target(target, numbers[1:])
+
+# Check if combination sums up to the maximum number
+def test_can_sum_to_max(arr):
+    max_num = max(arr)
+    return can_sum_to_target(max_num, arr)
+
+# Example usage
+arr = [6, 6, 23, 10, 1, 31]
+result = ArrayAddition(arr)
+print(result)  # This should print the array after removing the maximum number
+
+#check alphabett
+def StringChallenge(strParam):
+    alphabet = "abcdefghijklmnopqrstuvwxyz"
+    for char in alphabet:
+        if char not in strParam:
+            return "false"
+    return "true"
+
+# Example usage
+print(StringChallenge("zacxyjbbkfgtbhdaielgrm45pnsowtu v")) 

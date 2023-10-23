@@ -297,3 +297,16 @@ def StringChallenge(strParam):
 
 # Example usage
 print(StringChallenge("zacxyjbbkfgtbhdaielgrm45pnsowtu v")) 
+
+##camel case
+import re
+
+def CamelCase(string):
+    # Use regular expression to remove non-alphabet characters and split into words
+    words = re.findall(r'[a-zA-Z]+', string)
+    camel_case_words = [words[0].lower()]  # Convert the first word to lowercase
+    camel_case_words.extend(word.capitalize() for word in words[1:])
+    return ''.join(camel_case_words)
+
+# Test the function with user input
+print(CamelCase(input()))

@@ -149,3 +149,9 @@ FROM(SELECT COUNT(DateJoined) AS Date1, DateJoined
     GROUP BY MONTH(DateJoined)
     ORDER BY DateJoined) AS sub
 WHERE LAG(Date1) OVER (ORDER BY DateJoined) IS NOT NULL;
+-----------------------15 30 45---------------------------
+select t as sesion_duration ,count(t) as number_of_sessions
+from (select abs(minute(logout_time)-minute(login_time)) as t
+  where table_q )as y
+group by t
+group by t

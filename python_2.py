@@ -20,31 +20,16 @@ print(primetim(int(input())))
 
 def RunLength(s):
     result=''
-    count = 1
-    for i in range(1,len(s)):
-        if s[i]== s[i-1]:
-            count +=1
+    c=1
+    for i in range(len(s)-1):
+        if s[i] ==s[i+1]:
+            c +=1
         else:
-            result = str(count)+ s[i-1]
-            count= 1
-    result +=str(count) +s[-1]
+            result += s[i]+str(c)
+            c=1
+    result += s[-1]+str(c)
     return result
 print(RunLength(input("")))
-
-
-#number of repeated letters
-def RunLength(s):
-    result = ''
-    count = 1
-    for i in range(1, len(s)):
-        if s[i] == s[i - 1]:
-            count += 1
-        else:
-            result += str(count) + s[i - 1]
-            count = 1
-    result += str(count) + s[-1]
-    return result
-print(RunLength(input("Enter a string: ")))
 
 # Have the function PrimeMover(num) return the numth prime number. The range will be from 1 to 10^4.
 # For example: if num is 16 the output should be 53 as 53 is the 16th prime number.

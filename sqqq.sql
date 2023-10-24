@@ -27,4 +27,49 @@ GROUP BY Author
 ORDER BY COUNT(*) DESC
 LIMIT 1;
 
----
+---mcq---
+--Consider a table named "Orders" with columns "OrderDate" and "TotalAmount" What SQL query retrieves the average total order amount for each day of the week (e.g.. Monday, Tuesday, etc.)?
+--O Other answer
+-O SELECT DAYNAME(OrderDate) AS DayOfWeek, AVG(TotalAmount) FROM Orders GROUP BY DayOfWeek
+--O SELECT DATEPART(WEEKDAY, OrderDate) AS DayOfWeek, AVG(TotalAmount) FROM Orders GROUP BY DayOfWeek O SELECT TO CHAR(OrderDate, 'Day') AS DayOfWeek, AVG(TotalAmount) FROM Orders GROUP BY DayOfWeek
+--Which option is correct option tell number 
+2222222
+--Consider a table named "Sales" with columns "ProductID "SaleDate," and "Revenue." What SQL query retrieves the product that generated the highest total revenue on the most recent sale date?
+
+--O SELF ProductID, MAX(Revenue) FROM Sales WHERE SaleDate= (SELECT MAX(SaleDate) FROM Sales)
+
+--SELECT ProductID, SUM(Revenue) AS TotalRevenue FROM Sales GROUP BY ProductID HAVING SaleDate= (SELECT MAX(SaleDate) FROM Sales) ORDER BY TotalRevenue DESC LIMIT 1
+
+--O SELECT ProductID, SUM(Revenue) AS TotalRevenue FROM Sales GROUP BY ProductID HAVING SaleDate= MAX(SaleDate) ORDER BY TotalRevenue DESC LIMIT 1
+
+SELECT ProductID, SUM(Revenue) AS TotalRevenue FROM Sales WHERE SaleDate= (SELECT MAX(SaleDate) FROM Sales) GROUP BY ProductID ORDER BY Total Revenue DESC LIMIT 1
+Which option is correct 
+
+
+3333333333
+--Given a table named "Employees with columns "EmployeelD: "Salary" and "Department: what SQL query reve the top-earning employee in each department?
+
+--O SELECT DepartmentID, Salary FROM Employees WHERE Salary MAX(Salary) GROUP BY Department
+
+--O SELECT Department, Employee Salary FROM Employees WHERE (DepartmentID Salary) IN (SELECT Department MAX(Salary) FROM Employens GROUP BY DepartmentID)
+
+SELECT DepartmentID, EmployeeID, Salary FROM Employees WHERE (Departmentio, Salary) IN (SELECT DepartmentID, MAX(Salary) FROM Employees GROUP BY DepartmentID) GROUP BY Department
+
+--SLECT DepartmentID, EmployeeID, Salary FROM Employees WHERE (DepartmentID, Salary) IN (SELECT
+
+--DepartmentID, MAX(Salary) FROM Employees GROUP BY Department(t))
+--Which one is correct 
+4444
+--Given a table named "Orders" with columns "OrderDate" and "TotalAmount" what SQL query retrieves the month with the highest total order amount within the last year?
+
+SELECT EXTRACT(MONTH FROM OrderDate) AS Month, SUM(TotalAmount) AS TotalOrderAmount 
+FROM Orders WHERE OrderDate > DATE_SUB(NOW(), INTERVAL 1 YEAR) GROUP BY Month ORDER BY TotalOrderAmount DESC LIMIT 1;
+
+--SELECT EXTRACT(MONTH FROM OrderDate) AS Month, SUM(TotalAmount) AS TotalOrder Amount FROM Onders WHERE OrderDate> NOW() INTERVAL 1 year' GROUP BY Month ORDER BY LxalOrder Amount DE LIMIT
+
+--SELECT EXTRACT(MONTH FROM OrderDate) AS Month, SUM(TotalAmount) AS TotalOrderAmount FROM Qu WHERE OrderDate> DATEADD(YEAR, -1, GETDATE()) GROUP BY Month HAVING TotalOrder Amount MAX(TotalOrderAmount
+--hit Assessment
+--SELECT TO CHAR(OrderDate, MM) AS Month, MAX(SUM(TotalAmount)) FROM Orders WHERE OrderDate-NOW) -INTERVAL 1 year GROUP BY Month
+
+5555
+it counts the number of distinct employess in each departmat

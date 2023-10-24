@@ -48,20 +48,16 @@ print(RunLength(input("Enter a string: ")))
 
 # Have the function PrimeMover(num) return the numth prime number. The range will be from 1 to 10^4.
 # For example: if num is 16 the output should be 53 as 53 is the 16th prime number.
-import math
-def pimefun(s):
-    s=int(s)
-    r=[]
-    
-    k=10000
-    for i in range(2,k+1):
-        for j in range(2,int(math.sqrt(i)) +1):
-            if i%j ==0:
+def PrimeMover(num):
+    k=[]
+    for i in range(1000):
+        for j in range(2,i):
+            if i%j==0:
                 break
         else:
-            r.append(i)
-    return r[s - 1]
-print(pimefun(int(input())))
+            k.append(i)
+    return k[num+1]
+print(PrimeMover(int(input())))
 
 # Have the function PalindromeTwo(str) take the str parameter being passed and return the string true if the parameter
 # is a palindrome, (the string is the same forward as it is backward) otherwise return the string false. The parameter

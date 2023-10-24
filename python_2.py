@@ -143,6 +143,22 @@ string = "Caesar Cipher"
 num = 2
 print(CaesarCipher(string, num))
 
+--- orrr---
+
+def chang(num, char):
+    char = list(char)
+    r = []
+    k = [ord(c) for c in char]
+    for i in range(len(k)):
+        k[i] += num
+        r.append(k[i])
+    result = [chr(c) for c in r ]
+    result = "".join(result)
+    return result
+num = int(input())
+char = input()
+print(chang(num, char))
+
 
 # Using the Python language, have the function Consecutive(arr) take the array of integers stored in arr and return the
 # minimum number of integers needed to make the contents of arr consecutive from the lowest number to the highest

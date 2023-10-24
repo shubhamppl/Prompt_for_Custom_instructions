@@ -20,6 +20,7 @@ WHERE total_price = (
     FROM musigma_5qluo_orders
 );
 
+
 -- the most books in the library from the table "musigma_5qluo_Library" with the column name "Author
 SELECT Author
 FROM musigma_5qluo_Library
@@ -73,3 +74,26 @@ FROM Orders WHERE OrderDate > DATE_SUB(NOW(), INTERVAL 1 YEAR) GROUP BY Month OR
 
 5555
 it counts the number of distinct employess in each departmat
+
+Certainly! You can use the following SQL query to find the customers who made purchases every day for a continuous period of at least 3 days and return their `customer_id` and the start date of this continuous purchase period:
+
+```sql
+WITH RankedOrders AS (
+    SELECT customer_id, purchase_date,
+           DATEDIFF(purchase_date, 
+                    lag(purchase_date, 1) OVER (PARTITION BY customer_id ORDER BY purchase_date)
+                   ) as diff
+    FROM musigma_5qluo_orders
+)
+
+SELECT customer_id, MIN(purchase_date) AS start_date
+FROM (
+    SELECT customer_id, purchase_date, 
+           SUM(CASE WHEN diff = 1 THEN 1 ELSE 0 END) OVER (PARTITION BY customer_id ORDER BY purchase_date ROWS BETWEEN 2 PRECEDING AND CURRENT ROW) as consecutive_days
+    FROM RankedOrders
+) t
+WHERE consecutive_days = 3
+GROUP BY customer_id, DATE_SUB(purchase_date, INTERVAL consecutive_days - 1 DAY);
+```
+
+This query will identify the customers who made purchases every day for a continuous period of at least 3 days and provide their `customer_id` along with the start date of the continuous purchase period.

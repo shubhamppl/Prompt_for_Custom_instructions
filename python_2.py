@@ -302,11 +302,12 @@ print(StringChallenge("zacxyjbbkfgtbhdaielgrm45pnsowtu v"))
 import re
 
 def CamelCase(string):
-    # Use regular expression to remove non-alphabet characters and split into words
-    words = re.findall(r'[a-zA-Z]+', string)
-    camel_case_words = [words[0].lower()]  # Convert the first word to lowercase
-    camel_case_words.extend(word.capitalize() for word in words[1:])
-    return ''.join(camel_case_words)
-
-# Test the function with user input
+    k='!@#$%^&*()_+=-[]{}|\:;<>?/.,'
+    a=[x for x in word if x not in k]
+    g="".join(a).upper()
+    g=g.replace(' ',"")
+    check =g[0].lower()
+    kk=g.replace(g[0], check)
+    return kk
 print(CamelCase(input()))
+

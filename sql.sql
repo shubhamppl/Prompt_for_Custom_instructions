@@ -71,6 +71,11 @@ ORDER BY
     COUNT(maintable_V47CA.GroupID),
     maintable_V47CA.GroupID
 
+
+--        your query should return the vendor information along with the values from the table cb_vendorinformation.                      *
+--       You should combine the values of the two tables based on the GroupID column.                                                    *
+--       The final query should consolidate the rows to be grouped by FirstName,                                                         *
+--      and a Count column should be added at the end that adds up the number of times that person shows up in the table.               
 *                     |      35 |    Daniel  | Knolle    | Manager    | 39765        | Shipping & Co.      |     6  |                    *
 *                     +---------+------------+-----------+------------+--------------+---------------------+--------+                    *
 *                     |      35 |    Arnold  | Sully     | Manager    | 48507        | Shipping & Co.      |     6  |                    *
@@ -96,7 +101,7 @@ FROM
 ORDER BY SubQuery.COUNT, SubQuery.CompanyName, SubQuery.FirstName DESC
 
 
-------------------------------
+------------------------------salary difference-------------------------------------
 WITH cte AS ( SELECT  Name, 
         dept AS department, salary, 
         MAX(salary) OVER(PARTITION BY dept) AS maxsalary 
@@ -106,7 +111,7 @@ SELECT  Name, department,
 FROM  cte 
 WHERE department = 'IT';
 
--- Youngest employee
+--------------------- Youngest employee ---------------------------------------
 SELECT  name, age 
 FROM  table_name
 ORDER BY age 

@@ -1,5 +1,23 @@
 Here is the Python function `stringchallenge` that fulfills the described requirements:
+String Challenge
 
+Have the function stringchallenge (str) take the str parameter being passed and modify it using the following algorithm. Replace every letter in the string with the letter following it in the alphabet (ie. c becomes d, z becomes a). Then capitalize every vowel in this new string (a, e, i, o, u) and finally return this modified string.
+
+Once your function is working, take the final output string and combine it with your ChallengeToken, both in reverse order and separated by a colon.
+
+Your ChallengeToken: wsonpt60c
+
+Examples
+
+Input: "hello*3"
+
+Output: Ifmmp*3
+
+Final Output: 3 pmmfI:c06tpnosw
+
+?
+
+Input: "fun times!" Output; gvo Ujnft! Final Output: Itfnju Ovg:ce6tpпosw
 ```python
 def stringchallenge(s):
     result = ''

@@ -1,3 +1,4 @@
+
 def NonrepeatingCharacter(s):
     char_count = {}
     for char in s:

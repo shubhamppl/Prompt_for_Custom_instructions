@@ -276,6 +276,16 @@ def ArithGeo(arr):
 test_array = [2, 4, 6, 8]  # Change this array to test with other inputs
 print(ArithGeo(test_array))
 Arithmetic
+--------------------------------wrong-----------------------
+def arith_geo(zz):
+    for n in range(len(zz) - 1): 
+        if (zz[n + 1] - zz[n]) == (zz[n-1] - zz[n-2]):
+            return 'Arithmetic'
+        elif (zz[n + 1] / zz[n]) == (zz[n -1 ] / zz[n - 2]):
+            return 'Geometric'
+        else:
+            return -1
+print(arith_geo([1, 2, 3, 8, 5, 6]))
 #  Using the Python language, have the function ArrayAdditionI(arr) take the array of numbers stored in arr and return
 # the string true if any combination of numbers in the array can be added up to equal the largest number in the array,
 # otherwise return the string false. For example: if arr contains [4, 6, 23, 10, 1, 3] the output should return true

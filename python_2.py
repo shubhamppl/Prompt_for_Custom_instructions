@@ -397,4 +397,30 @@ def CamelCase(string):
     kk=g.replace(g[0], check)
     return kk
 print(CamelCase(input()))
+# Using the Python language, have the function DashInsertII(str) insert dashes ('-') between each two odd numbers and
+# insert asterisks ('*') between each two even numbers in str. For example: if str is 4546793 the output should be
+# 454*67-9-3. Don't count zero as an odd or even number.
+def DashInsertII(str):
+    result = ""
+    for i in range(len(str) - 1):
+        current_char = str[i]
+        next_char = str[i + 1]
+        if current_char.isdigit() and next_char.isdigit:
+            current_num = int(current_char)
+            next_num = int(next_char)
+            if (current_num % 2 == 1 and next_num % 2 == 1) or (current_num % 2 == 0 and next_num % 2 == 0):
+                if current_num % 2 == 1:
+                    result += current_char + "-"
+                else:
+                    result += current_char + "*"
+            else:
+                result += current_char
+        else:
+            result += current_char
+    result += str[-1]  # Add the last character
+    return result
+input_str = "4546793"
+output_str = DashInsertII(input_str)
+print("Output:", output_str)
+
 

@@ -56,18 +56,51 @@ print(NonrepeatingCharacter(input()))
 #If there are no two numbers that sum to the first element in the array, return -1
 # Have the function PrimeTime(num) take the num parameter being passed and return the string true if the parameter is
 # a prime n as mumber, otherwise return the string false. The range will be between 1 and 2^16.
-import math as m
-def primetim(num):
-    if num <2:
-        return True
-    else:
-        print('false')
-    for i in range(2,int(m.sqrt(num))):
-        if num%i == 0:
+#Have the function Time) take the array of integers stored in , and determine if any two numbers (excluding the first element) in the array can sum up to the first element in the array.
+#For example: if x is 17, 3, 5, 2, 4, 8, 11), then there are actually two pairs that sum to the number 7: 15, 2] and 1-4, 11). 
+#Your program should return all pairs, with the numbers separated by a comma, 
+#in the order the first number appears in the array. Pairs should be separated by a space. So for the example above, your program would return: 5,2 -4,11
+#If there are no two numbers that sum to the first element in the array, return -1
+# Have the function PrimeTime(num) take the num parameter being passed and return the string true if the parameter is
+# a prime n as mumber, otherwise return the string false. The range will be between 1 and 2^16.
+def Time(arr):
+    first_element = arr[0]
+    pairs = []
+
+    for i in range(1, len(arr) - 1):
+        for j in range(i + 1, len(arr)):
+            if arr[i] + arr[j] == first_element:
+                pairs.append(f"{arr[i]},{arr[j]}")
+
+    if not pairs:
+        return -1
+
+    return " ".join(pairs)
+
+def is_prime(num):
+    if num < 2:
+        return False
+    for i in range(2, int(num ** 0.5) + 1):
+        if num % i == 0:
             return False
-        else :
-            return True
-print(primetim(int(input())))
+    return True
+
+def PrimeTime(num):
+    if is_prime(num):
+        return "true"
+    else:
+        return "false"
+
+# Example usage of Time function
+arr = [17, 3, 5, 2, 4, 8, 11]
+time_result = Time(arr)
+print("Pairs that sum to the first element:", time_result)
+
+# Example usage of PrimeTime function
+num = 17
+prime_result = PrimeTime(num)
+print("Is the number prime?", prime_result)
+
 
 #Have the function RunLength(str) take the str parameter being passed and return a compressed version of the string
 # using the Run-length encoding algorithm. This algorithm works by taking the occurrence of each repeating character

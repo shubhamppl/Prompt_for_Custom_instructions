@@ -289,16 +289,17 @@ def NumberSearch(a_str):
 # have the straight triple 999 and you have a straight double, 99, of the same number in the second parameter.
 #  If this isn't the case, return 0.
 def TripleDouble(num1, num2):
-    num1_str, num2_str = str(num1), str(num2)
+    n1=   str(num1)
+    n2 =  str(num2)
     for i in range(len(num1_str) - 2):
-        if num1_str[i] == num1_str[i + 1] == num1_str[i + 2]:
-            if num1_str[i] * 2 in num2_str:
+        if n1[i] == n1[i + 1] == n1[i + 2]:
+            if n1[i] * 2 in n2:
                 return 1
-    return 0
+        return 0
 
 # Test the function
 num1 = 451999277
-num2 = 41177722899
+num2 = 411777228977
 print(TripleDouble(num1, num2))
 
 # Using the Python language, have the function LookSaySequence(num) take the num parameter being passed and return the

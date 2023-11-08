@@ -23,3 +23,4 @@ def ArrayMinJumps(arr):
     return -1
 input_array = list(map(int, input().strip('[]').split(',')))
 print(ArrayMinJumps(input_array))
+

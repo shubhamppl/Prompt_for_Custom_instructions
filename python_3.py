@@ -24,3 +24,42 @@ def ArrayMinJumps(arr):
 input_array = list(map(int, input().strip('[]').split(',')))
 print(ArrayMinJumps(input_array))
 
+
+
+*             CODERBYTE SCALE BALANCING CHALLENGE              *
+ *                                                              *
+ * Problem Statement                                            *
+ * Have the function ScaleBalancing(strArr) read strArr which   *
+ * will contain two elements, the first being the two positive  *
+ * integer weights on a balance scale (left and right sides)    *
+ * and the second element being a list of available weights as  *
+ * positive integers. Your goal is to determine if you can      *
+ * balance the scale by using the least amount of weights from  *
+ * the list, but using at most only 2 weights.                  *
+def ScaleBalancing(strArr):
+    # Parse the input
+    weights_str, available_weights_str = strArr
+
+    # Extract the weights on both sides of the scale
+    left_weight, right_weight = map(int, weights_str[1:-1].split(','))
+
+    # Extract the list of available weights
+    available_weights = list(map(int, available_weights_str[1:-1].split(',')))
+
+    # Check for trivial solutions
+    difference = right_weight - left_weight
+    if difference in available_weights:
+        return str(difference)
+
+    # Brute-force search
+    for weight1 in available_weights:
+        for weight2 in available_weights:
+            if left_weight + weight1 == right_weight - weight2:
+                return f"{weight1},{weight2}"
+
+    # If no solution is found, return "not possible"
+    return "not possible"
+strArr = ["[3, 4]", "[1, 2, 7, 7]"]
+output = ScaleBalancing(strArr)
+print(output)  # Output: 1
+

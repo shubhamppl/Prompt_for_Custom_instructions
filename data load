@@ -1,0 +1,390 @@
+import pandas as pd
+import io
+import gc
+from utils.connection import blob_connection
+from utils.connection import pgdb_connection
+
+
+
+# Connection to blob
+try:
+    container_client = blob_connection()
+    print("Connected to Azure Blob Storage.")
+except AzureError as e:
+    print(f"Failed to connect: {e}")
+    raise
+
+
+## Establishing Connection to Postgres
+Postgresconnection = pgdb_connection()
+
+
+YEAR_MONTHS = ["202410","202411","202412"]
+
+
+selected_cols = [
+    "FULL_FLIGHT_NUMBER_FLNO",
+    "ARR_DEP_FLG_ADID",
+    "SCHEDULED_IN_BLOCK_TIME_SIBT",
+    "SCHEDULED_OFF_BLOCK_TIME_SOBT",
+    "TERMINAL",
+    "IATA_AIRCRFT_CODE_ACT3",
+    "ICAO_AIRCRFT_CODE_NEW_ACTI",
+    "ORIGIN_AIRPORT_CODE_ORG3",
+    "FIRST_LAST_AIRPORT_CODE_VIA3",
+    "HOME_AIRPORT_CODE_HOPO",
+    "DEST_AIRPORT_CODE_DES3",
+    "ORIGIN_AIRPORT_CODE_ORG4",
+    "FIRST_LAST_AIRPORT_CODE_VIA4",
+    "DEST_AIRPORT_CODE_DES4",
+    "FLIGHT_NATURE_TTYP",
+    "FLIGHT_SERVICE_STYP_CAT",
+    "EOBT",
+    "GROUND_HANDLER",
+    "CALL_SIGN_CSGN",
+    "ELDT",
+    "EIBT",
+    "AIRCRAFT_REGN",
+    "ETOT",
+    "PARKING_STAND",
+    "DEP_GATE1_GTD1",
+    "DEP_GATE2_GTD2",
+    "TMOA",
+    "ACTUAL_LANDING_TIME_ALDT",
+    "ACTUAL_IN_BLOCK_TIME_AIBT",
+    "FIRST_BAG_TIME",
+    "BAGGAGE_BELT1_BLT1",
+    "BAGGAGE_BELT2_BLT2",
+    "ARR_GATE1_GTA1",
+    "ARR_GATE2_GTA2",
+    "RUNWAY",
+    "LAST_BAG_TIME",
+    "ARR_DELAY_DELA",
+    "DEP_DELAY_DELD",
+    "ASBT",
+    "BOARDING_OPEN_TIME_BOAC",
+    "FINAL_CALL_FCAL",
+    "BOARDING_CLOSE_TIME_BOAO",
+    "ACTUAL_OFF_BLOCK_TIME_AOBT",
+    "ACTUAL_TAKEOFF_TIME_ATOT",
+    "CODE_SHARE_JCNT",
+    "TOTAL_ADULT_PAX",
+    "TOTAL_INFANT_PAX",
+    "NO_OF_SEATS_NOSE",
+    "FIRST_CLASS_PAX_COUNT_PAX1",
+    "SECND_CLASS_PAX_COUNT_PAX2",
+    "THIRD_CLASS_PAX_COUNT_PAX3",
+    "TRANSFER_PAX_COUNT_PAXF",
+    "TRANSIT_PAX_COUNT_PAXI",
+    "NO_OF_PAX_PAXT",
+    "AIRLINE_NAME"
+]
+
+
+table_name = "tb_flight_fact_report"
+
+
+import os
+
+def load_completed_files(progress_file="progress.txt"):
+    if not os.path.exists(progress_file):
+        return set()
+    completed = set()
+    with open(progress_file, "r") as f:
+        for line in f:
+            try:
+                _, file_name = line.strip().split("|", 1)
+                completed.add(file_name)
+            except:
+                pass
+    return completed
+
+def append_progress(index, file_name, progress_file="progress.txt"):
+    with open(progress_file, "a") as f:
+        f.write(f"{index}|{file_name}\n")
+
+def append_skipped(file_name, reason, skipped_file="skipped.txt"):
+    with open(skipped_file, "a") as f:
+        f.write(f"{file_name} | {reason}\n")
+ 
+
+
+import io
+import gc
+
+def write_in_chunks(df, Postgresconnection, table_name, schema="stage", chunksize=10000):
+
+    if hasattr(Postgresconnection, "raw_connection"):
+        conn = Postgresconnection.raw_connection()
+    else:
+        conn = Postgresconnection
+
+    cur = conn.cursor()
+
+    for start in range(0, len(df), chunksize):
+        end = start + chunksize
+        chunk = df.iloc[start:end]
+
+        buf = io.StringIO()
+        chunk.to_csv(buf, index=False, header=False)
+        buf.seek(0)
+
+        columns = ",".join([f'"{c}"' for c in df.columns])
+        sql = f"COPY {schema}.{table_name} ({columns}) FROM STDIN WITH CSV"
+
+        cur.copy_expert(sql, buf)
+        conn.commit()
+
+        buf.close()
+        del chunk
+        gc.collect()
+
+    cur.close()
+
+    if hasattr(Postgresconnection, "raw_connection"):
+        conn.close()
+
+
+import pandas as pd
+import io
+import gc
+
+def load_all_parquet_files(container_client, folder_path, Postgresconnection, table_name, selected_cols):
+
+    if not folder_path.endswith("/"):
+        folder_path += "/"
+
+    parquet_files = [
+        blob.name
+        for blob in container_client.list_blobs(name_starts_with=folder_path)
+        if blob.name.endswith(".parquet")
+    ]
+    parquet_files.sort()
+
+    total_files = len(parquet_files)
+    print(f"Total parquet files found: {total_files}")
+
+    completed_files = load_completed_files()
+    print(f"Completed files loaded: {len(completed_files)}")
+
+    for idx, file_path in enumerate(parquet_files):
+
+        if file_path in completed_files:
+            print(f"Skipping already processed: {file_path}")
+            continue
+
+        print(f"\n[{idx+1}/{total_files}] Processing: {file_path}")
+
+        try:
+            blob_client = container_client.get_blob_client(file_path)
+
+            props = blob_client.get_blob_properties()
+            if props.size == 0:
+                reason = "EMPTY FILE (0 bytes)"
+                print(f"⚠️ {reason} → Skipping: {file_path}")
+                append_skipped(file_path, reason)
+                append_progress(idx, file_path)
+                continue
+
+            parquet_bytes = blob_client.download_blob().readall()
+
+            df = pd.read_parquet(io.BytesIO(parquet_bytes), columns=selected_cols)
+
+            if df.empty:
+                reason = "EMPTY DATAFRAME (0 rows)"
+                print(f"⚠️ {reason} → Skipping: {file_path}")
+                append_skipped(file_path, reason)
+                append_progress(idx, file_path)
+                del parquet_bytes
+                gc.collect()
+                continue
+
+            print(f"Loaded {len(df):,} rows")
+
+            write_in_chunks(df, Postgresconnection, table_name)
+            print(f"Inserted {len(df):,} rows successfully.")
+
+            append_progress(idx, file_path)
+
+            del df, parquet_bytes
+            gc.collect()
+
+        except Exception as e:
+            reason = f"ERROR: {e}"
+            print(f"❌ {reason}")
+            append_skipped(file_path, reason)
+            print("Stopping. Will resume later.")
+            break
+
+    print("\n🎉 Folder completed (or safely stopped).")
+
+
+def process_all_yearmonths(container_client, Postgresconnection, table_name, selected_cols):
+
+    for ym in YEAR_MONTHS:
+        folder_path = f"tb_flight_fact_report/yearmonth={ym}/"
+
+        print("\n" + "="*80)
+        print(f"📂 Starting folder: {folder_path}")
+        print("="*80)
+
+        load_all_parquet_files(
+            container_client,
+            folder_path,
+            Postgresconnection,
+            table_name,
+            selected_cols
+        )
+
+    print("\n🎉 ALL YEAR-MONTH FOLDERS COMPLETED!")
+
+
+process_all_yearmonths(
+    container_client,
+    Postgresconnection,
+    table_name,
+    selected_cols
+)
+
+
+
+in folder now:
+--config
+----config.yamal
+## Details for the BLOB
+blob:
+  container_name: gold  
+--utils
+-----common.py
+import yaml
+import os
+# from utils.logger import get_logger
+
+# logger = get_logger(__name__)
+
+def load_yaml_config(file_path: str) -> dict:
+    """
+    Load and parse a YAML configuration file.
+    
+    Parameters:
+        file_path (str): Path to the YAML file.
+    
+    Returns:
+        dict: Parsed configuration data.
+    
+    Raises:
+        FileNotFoundError: If the file is missing.
+        yaml.YAMLError: If the YAML is invalid.
+    """
+    if not os.path.exists(file_path):
+        # logger.error(f"YAML config file not found: {file_path}")
+        raise FileNotFoundError(f"Config file not found: {file_path}")
+
+    try:
+        with open(file_path, "r") as f:
+            config = yaml.safe_load(f)
+            # logger.info(f"Loaded YAML configuration from {file_path}")
+            return config
+    except yaml.YAMLError as e:
+        # logger.error(f"Error parsing YAML file: {e}")
+        raise
+----- connection.py
+from azure.identity import ManagedIdentityCredential
+from azure.storage.blob import BlobServiceClient
+from sqlalchemy import create_engine, text
+from urllib.parse import quote_plus
+from env_loader import get_env_variable
+from sqlalchemy import create_engine
+from utils.common import load_yaml_config
+
+# Load from .env
+ACCOUNT_URL = get_env_variable("ACCOUNT_URL", required=True)
+
+# Load from YAML via common.py
+config = load_yaml_config("config/config.yaml")
+CONTAINER_NAME = config["blob"]["container_name"]
+
+def blob_connection():
+    """
+    Establish a connection to Azure Blob Storage using Managed Identity.
+    """
+    try:
+        credential = ManagedIdentityCredential()
+        blob_service_client = BlobServiceClient(
+            account_url=ACCOUNT_URL,
+            credential=credential
+        )
+        container_client = blob_service_client.get_container_client(CONTAINER_NAME)
+        print(f"Connected to blob container: {CONTAINER_NAME}")
+        return container_client
+    except Exception as e:
+        print(f"Error connecting to Azure Blob Storage: {e}")
+        raise
+
+
+from sqlalchemy import create_engine, text
+from urllib.parse import quote_plus
+from env_loader import get_env_variable
+
+def pgdb_connection():
+    """
+    Establish a connection to Azure PostgreSQL (pgdb) using credentials from .env.
+
+    Returns:
+        engine (sqlalchemy.Engine): SQLAlchemy engine connected to PostgreSQL.
+    """
+    try:
+        DB_HOST = get_env_variable("DB_HOST", required=True)
+        DB_PORT = get_env_variable("DB_PORT", default="5432")
+        DB_NAME = get_env_variable("DB_NAME", required=True)
+        DB_USER = get_env_variable("DB_USER", required=True)
+        DB_PASS = get_env_variable("DB_PASS", required=True)
+        DB_SSL = get_env_variable("DB_SSL", default="true")
+        
+        # URL-encode password
+        encoded_password = quote_plus(DB_PASS)
+        ssl_args = {"sslmode": "require"} if DB_SSL.lower() == "true" else {}
+
+        connection_url = f"postgresql+psycopg2://{DB_USER}:{encoded_password}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
+        engine = create_engine(connection_url, connect_args=ssl_args)
+
+        # Test connection
+        with engine.connect() as conn:
+            print("Connected successfully to PostgreSQL (pgdb)")
+        return engine
+
+    except Exception as e:
+        print(f"Error connecting to PostgreSQL: {e}")
+        raise
+root:
+--env_loader.py 
+import os
+from dotenv import load_dotenv
+
+# Load environment variables from .env
+load_dotenv(override=True)
+
+def get_env_variable(var_name, default=None, required=False):
+    """
+    Fetch an environment variable or return a default.
+    """
+    value = os.getenv(var_name, default)
+    if required and value is None:
+        raise EnvironmentError(f"Required environment variable '{var_name}' not found.")
+    return value
+
+-- .env
+DB_HOST=
+DB_PORT=
+DB_NAME=postgres
+DB_USER=
+DB_PASS=
+DB_SSL=true
+DB_SYNCHRONIZE=false
+
+
+ACCOUNT_URL = "windows.net"
+ 
+ 
+ 
+ 
